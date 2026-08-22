@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ice Cream & Slush POS - Splash</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Mobile Theme Color & App Properties -->
+    <meta name="theme-color" content="#a855f7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind Console Warning Suppressor -->
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function(msg) {
+            if (typeof msg === 'string' && msg.includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, arguments);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Animations -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.7); transform: scale(1.05); }
+            100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); transform: scale(1); }
+        }
+        
+        .animate-glow-pulse {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- App Logo Icon -->
+    <div class="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white animate-glow-pulse mb-6 z-10 relative shadow-2xl">
+        <div class="absolute inset-0 border-2 border-white/30 rounded-[2rem]"></div>
+        <i class="fa-solid fa-ice-cream text-6xl drop-shadow-md"></i>
+    </div>
+    
+    <!-- Title -->
+    <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 tracking-tight mb-1 animate-fade-up" style="opacity: 0; animation-delay: 0.2s;">
+        Ice Cream & Slush
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="text-xs text-purple-800 font-bold tracking-widest uppercase animate-fade-up" style="opacity: 0; animation-delay: 0.4s;">
+        Smart Inventory & Profit POS
+    </p>
+    
+    <!-- Loading Animation -->
+    <div class="mt-12 flex space-x-3 animate-fade-up" style="opacity: 0; animation-delay: 0.6s;">
+        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce"></div>
+        <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+    </div>
+
+    <!-- Initialization & Safe Service Worker Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ERROR FIX: Safe Service Worker Registration
+            // Only registers if the protocol is HTTP or HTTPS (prevents HopWeb/File protocol TypeError)
+            if ('serviceWorker' in navigator) {
+                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                    window.addEventListener('load', () => {
+                        navigator.serviceWorker.register('sw.js')
+                            .then(reg => console.log('Service Worker Registered Successfully'))
+                            .catch(err => console.log('Service Worker Error', err));
+                    });
+                } else {
+                    console.log('Running in Native/Local mode. Service Worker registration safely bypassed.');
+                }
+            }
+
+            // Default Categories Preset Setup
+            if (!localStorage.getItem('ic_categories')) {
+                const defaultCategories = [
+                    { id: 'cat_cone', name: 'ICE CREAM CONE' },
+                    { id: 'cat_cup', name: 'ICE CREAM CUP' },
+                    { id: 'cat_juice', name: 'JUICE & SLUSH CUP' },
+                    { id: 'cat_acc', name: 'ACCESSORIES & PACKAGING' }
+                ];
+                localStorage.setItem('ic_categories', JSON.stringify(defaultCategories));
+            }
+
+            // Default Stock Items Preset Setup
+            if (!localStorage.getItem('ic_items')) {
+                const defaultPresetItems = [
+                    // Ice Cream Cones
+                    { id: 'item_1', categoryId: 'cat_cone', name: 'Small Cone', costPrice: 6, price: 10, quantity: 100 },
+                    { id: 'item_2', categoryId: 'cat_cone', name: 'Regular Cone', costPrice: 12, price: 20, quantity: 100 },
+                    { id: 'item_3', categoryId: 'cat_cone', name: 'Large Cone', costPrice: 18, price: 30, quantity: 100 },
+                    { id: 'item_4', categoryId: 'cat_cone', name: 'Jumbo Cone', costPrice: 30, price: 50, quantity: 100 },
+                    
+                    // Ice Cream Cups
+                    { id: 'item_5', categoryId: 'cat_cup', name: 'Small Cup', costPrice: 12, price: 20, quantity: 100 },
+                    { id: 'item_6', categoryId: 'cat_cup', name: 'Medium Cup', costPrice: 18, price: 30, quantity: 100 },
+                    { id: 'item_7', categoryId: 'cat_cup', name: 'Large Cup', costPrice: 30, price: 50, quantity: 100 },
+                    
+                    // Juice & Slush Cups
+                    { id: 'item_8', categoryId: 'cat_juice', name: 'Small Juice Cup', costPrice: 12, price: 20, quantity: 100 },
+                    { id: 'item_9', categoryId: 'cat_juice', name: 'Medium Juice Cup', costPrice: 18, price: 30, quantity: 100 },
+                    { id: 'item_10', categoryId: 'cat_juice', name: 'Large Juice Cup', costPrice: 30, price: 50, quantity: 100 },
+                    { id: 'item_11', categoryId: 'cat_juice', name: 'Jumbo Juice Cup', costPrice: 60, price: 100, quantity: 100 },
+
+                    // Accessories & Packaging
+                    { id: 'item_12', categoryId: 'cat_acc', name: 'Ice Cream Spoons (Pack)', costPrice: 150, price: 200, quantity: 20 },
+                    { id: 'item_13', categoryId: 'cat_acc', name: 'Wooden Sticks (Pack)', costPrice: 100, price: 150, quantity: 20 },
+                    { id: 'item_14', categoryId: 'cat_acc', name: 'Chocolate Syrup Bottle', costPrice: 450, price: 600, quantity: 10 }
+                ];
+                localStorage.setItem('ic_items', JSON.stringify(defaultPresetItems));
+            }
+
+            // History Database Initialization
+            if (!localStorage.getItem('ic_history')) {
+                localStorage.setItem('ic_history', JSON.stringify([]));
+            }
+
+            // Theme Setting Initialization
+            if (!localStorage.getItem('ic_theme')) {
+                localStorage.setItem('ic_theme', 'light');
+            }
+
+            // Seamless Redirect to Dashboard
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2600);
+        });
+    </script>
+</body>
+</html>

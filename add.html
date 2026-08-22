@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ice Cream & Slush - Add Inventory</title>
+    
+    <!-- PWA Link -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Mobile App Properties -->
+    <meta name="theme-color" content="#a855f7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind Console Warning Suppressor -->
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function(msg) {
+            if (typeof msg === 'string' && msg.includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, arguments);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            purple: '#f3e8ff', pink: '#fce7f3', 
+                            blue: '#e0f2fe', dark: '#1f2937'
+                        }
+                    },
+                    boxShadow: {
+                        'ios': '0 8px 30px rgba(0,0,0,0.04)',
+                        'ios-lg': '0 20px 40px rgba(0,0,0,0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f8fafc;
+            overflow-x: hidden;
+            user-select: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        ::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Animation */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.4s ease-out forwards;
+        }
+
+        input[type="file"] { display: none; }
+        .file-upload-box {
+            border: 2px dashed #d8b4fe;
+            background: #fdf4ff;
+            transition: all 0.3s;
+        }
+        .file-upload-box:active { background: #fae8ff; transform: scale(0.98); }
+
+        /* Dark Theme Support */
+        body.dark-mode {
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        body.dark-mode .bg-white {
+            background-color: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+        body.dark-mode .text-gray-800, body.dark-mode .text-gray-900, body.dark-mode .text-gray-700 {
+            color: #f1f5f9 !important;
+        }
+        body.dark-mode .text-gray-500, body.dark-mode .text-gray-400 {
+            color: #94a3b8 !important;
+        }
+        body.dark-mode .bg-gray-50, body.dark-mode .bg-gray-100 {
+            background-color: #334155 !important;
+            color: #f8fafc !important;
+        }
+        body.dark-mode .glass-nav {
+            background: rgba(30, 41, 59, 0.92) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased h-screen flex flex-col">
+
+    <!-- ========================================== -->
+    <!-- TOP APP BAR                                -->
+    <!-- ========================================== -->
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md shadow-sm py-4 px-4 flex justify-between items-center border-b border-gray-100 w-full">
+        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+            <button onclick="window.location.href='index.html'" class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-purple-100 hover:text-purple-600 transition active:scale-90 flex-shrink-0">
+                <i class="fa-solid fa-arrow-left text-sm"></i>
+            </button>
+            <div class="min-w-0 flex-1">
+                <h1 class="text-base font-bold text-gray-800 leading-tight truncate">Add Stock & Category</h1>
+                <p class="text-[10px] text-purple-600 font-bold uppercase tracking-wider truncate">Ice Cream & Slush Items</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- MAIN CONTENT AREA                          -->
+    <!-- ========================================== -->
+    <main class="flex-1 w-full max-w-lg mx-auto overflow-y-auto px-3.5 pt-3.5 pb-24 animate-fade-up">
+        
+        <!-- Toggle Tabs for Form Type -->
+        <div class="flex bg-gray-100 p-1 rounded-2xl mb-4 shadow-inner">
+            <button onclick="switchForm('item')" id="tab-item" class="flex-1 py-2.5 rounded-xl font-bold text-xs transition shadow-sm bg-white text-purple-700">Add Product Item</button>
+            <button onclick="switchForm('category')" id="tab-category" class="flex-1 py-2.5 rounded-xl font-bold text-xs transition text-gray-500">Add Category</button>
+        </div>
+
+        <!-- FORM 1: STOCK ITEM FORM (PRIMARY) -->
+        <div id="form-item" class="space-y-3.5">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-bold text-xs text-gray-800 border-b border-gray-50 pb-2 flex items-center gap-2 uppercase tracking-wide">
+                    <i class="fa-solid fa-box-open text-pink-500 text-sm"></i> Product Details & Pricing
+                </h3>
+
+                <!-- Category Dropdown -->
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Select Category</label>
+                    <select id="item-cat" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-2xl text-xs font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                        <!-- Options injected dynamically -->
+                    </select>
+                </div>
+
+                <!-- Product Name / Preset Sizes Dropdown or Custom Input -->
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Product Name / Size</label>
+                    <input type="text" id="item-name" placeholder="e.g. Small Cone, Medium Cup, Jumbo Slush" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-2xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-purple-400 mb-1.5">
+                    
+                    <!-- Quick Presets -->
+                    <div class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                        <span onclick="setPresetName('Small')" class="px-2.5 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold rounded-lg cursor-pointer hover:bg-purple-100 flex-shrink-0 border border-purple-100">+ Small</span>
+                        <span onclick="setPresetName('Regular')" class="px-2.5 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold rounded-lg cursor-pointer hover:bg-purple-100 flex-shrink-0 border border-purple-100">+ Regular</span>
+                        <span onclick="setPresetName('Medium')" class="px-2.5 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold rounded-lg cursor-pointer hover:bg-purple-100 flex-shrink-0 border border-purple-100">+ Medium</span>
+                        <span onclick="setPresetName('Large')" class="px-2.5 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold rounded-lg cursor-pointer hover:bg-purple-100 flex-shrink-0 border border-purple-100">+ Large</span>
+                        <span onclick="setPresetName('Jumbo')" class="px-2.5 py-1 bg-purple-50 text-purple-700 text-[10px] font-bold rounded-lg cursor-pointer hover:bg-purple-100 flex-shrink-0 border border-purple-100">+ Jumbo</span>
+                    </div>
+                </div>
+
+                <!-- Quantities & Financial Prices -->
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-600 uppercase tracking-wide mb-1">Stock Qty *</label>
+                        <input type="number" id="item-qty" placeholder="100" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-600 uppercase tracking-wide mb-1">Cost Price (خرید)</label>
+                        <input type="number" id="item-cost-price" placeholder="12" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-bold text-gray-600 uppercase tracking-wide mb-1">Sale Price (فروخت)</label>
+                        <input type="number" id="item-price" placeholder="20" class="w-full bg-gray-50 border border-gray-200 p-2.5 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    </div>
+                </div>
+
+                <!-- Product Image Upload -->
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Product Photo (Optional)</label>
+                    <label class="file-upload-box w-full h-16 flex flex-col items-center justify-center rounded-2xl cursor-pointer">
+                        <i class="fa-solid fa-camera text-base text-pink-400 mb-0.5"></i>
+                        <span class="text-[9px] font-semibold text-pink-700" id="item-img-text">Tap to upload picture</span>
+                        <input type="file" id="item-img" accept="image/*" onchange="handleImageUpload(event, 'item-img-preview', 'item-img-text', 'item')">
+                    </label>
+                    <img id="item-img-preview" class="hidden mt-2 w-full h-20 object-cover rounded-xl border border-gray-200 shadow-sm">
+                </div>
+
+                <button onclick="saveItem()" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3.5 rounded-2xl text-xs shadow-md hover:opacity-90 active:scale-95 transition mt-2">
+                    <i class="fa-solid fa-plus mr-1"></i> Save Stock Product
+                </button>
+            </div>
+        </div>
+
+        <!-- FORM 2: CATEGORY FORM -->
+        <div id="form-category" class="space-y-3.5 hidden">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-bold text-xs text-gray-800 border-b border-gray-50 pb-2 flex items-center gap-2 uppercase tracking-wide">
+                    <i class="fa-solid fa-folder-plus text-purple-500 text-sm"></i> New Category Details
+                </h3>
+                
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Category Name</label>
+                    <input type="text" id="cat-name" placeholder="e.g. ICE CREAM CONE, SLUSH CUP" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-2xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-400">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1">Category Image (Optional)</label>
+                    <label class="file-upload-box w-full h-24 flex flex-col items-center justify-center rounded-2xl cursor-pointer">
+                        <i class="fa-solid fa-cloud-arrow-up text-xl text-purple-400 mb-1"></i>
+                        <span class="text-[10px] font-semibold text-purple-700" id="cat-img-text">Tap to upload category image</span>
+                        <input type="file" id="cat-img" accept="image/*" onchange="handleImageUpload(event, 'cat-img-preview', 'cat-img-text', 'cat')">
+                    </label>
+                    <img id="cat-img-preview" class="hidden mt-2 w-full h-24 object-cover rounded-2xl border border-gray-200 shadow-sm">
+                </div>
+
+                <button onclick="saveCategory()" class="w-full bg-purple-600 text-white font-bold py-3.5 rounded-2xl text-xs shadow-md hover:bg-purple-700 active:scale-95 transition mt-2">
+                    <i class="fa-solid fa-check mr-1"></i> Save New Category
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Toast Notification -->
+    <div id="toast-box" class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full text-[11px] font-semibold shadow-2xl z-[100] transition-all duration-300 opacity-0 pointer-events-none translate-y-[-20px] max-w-[90%] truncate">
+        Notification
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BOTTOM NAVIGATION BAR                      -->
+    <!-- ========================================== -->
+    <nav class="fixed bottom-0 left-0 w-full glass-nav z-50 pb-safe pb-2">
+        <div class="flex justify-around items-center h-16 px-2 max-w-lg mx-auto">
+            <button onclick="window.location.href='index.html'" class="flex flex-col items-center w-full text-gray-400 hover:text-gray-800 transition active:scale-90">
+                <i class="fa-solid fa-house text-xl mb-1"></i>
+                <span class="text-[10px] font-semibold">Home</span>
+            </button>
+            <button onclick="window.location.href='view.html'" class="flex flex-col items-center w-full text-gray-400 hover:text-gray-800 transition active:scale-90">
+                <i class="fa-solid fa-layer-group text-xl mb-1"></i>
+                <span class="text-[10px] font-semibold">View</span>
+            </button>
+            <!-- Active: Add -->
+            <button onclick="window.location.href='add.html'" class="flex flex-col items-center w-full text-purple-600 transition active:scale-90 relative">
+                <div class="absolute -top-6 w-12 h-12 bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg border-4 border-white transition-transform hover:scale-105">
+                    <i class="fa-solid fa-plus text-xl"></i>
+                </div>
+                <span class="text-[10px] font-bold mt-7">Add</span>
+            </button>
+            <button onclick="window.location.href='history.html'" class="flex flex-col items-center w-full text-gray-400 hover:text-gray-800 transition active:scale-90">
+                <i class="fa-solid fa-clock-rotate-left text-xl mb-1"></i>
+                <span class="text-[10px] font-semibold">History</span>
+            </button>
+            <button onclick="window.location.href='setting.html'" class="flex flex-col items-center w-full text-gray-400 hover:text-gray-800 transition active:scale-90">
+                <i class="fa-solid fa-gear text-xl mb-1"></i>
+                <span class="text-[10px] font-semibold">Setting</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT CORE LOGIC                      -->
+    <!-- ========================================== -->
+    <script>
+        let categories = [];
+        let items = [];
+        let history = [];
+        let catImageBase64 = '';
+        let itemImageBase64 = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedTheme();
+            loadData();
+            populateCategoryDropdown();
+
+            // Handle URL Parameters (add.html?type=category or add.html?type=item)
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            if (type === 'category') {
+                switchForm('category');
+            } else {
+                switchForm('item');
+            }
+        });
+
+        function loadSavedTheme() {
+            const savedTheme = localStorage.getItem('ic_theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function loadData() {
+            try {
+                categories = JSON.parse(localStorage.getItem('ic_categories')) || [];
+                items = JSON.parse(localStorage.getItem('ic_items')) || [];
+                history = JSON.parse(localStorage.getItem('ic_history')) || [];
+            } catch (e) {
+                console.error("Local Storage Load Error:", e);
+                categories = []; items = []; history = [];
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-box');
+            toast.innerText = msg;
+            toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-[-20px]');
+            }, 2200);
+        }
+
+        function switchForm(formType) {
+            const btnCat = document.getElementById('tab-category');
+            const btnItem = document.getElementById('tab-item');
+            const formCat = document.getElementById('form-category');
+            const formItem = document.getElementById('form-item');
+
+            if (formType === 'category') {
+                btnCat.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition shadow-sm bg-white text-purple-700";
+                btnItem.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition text-gray-500";
+                formCat.classList.remove('hidden');
+                formItem.classList.add('hidden');
+            } else {
+                btnItem.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition shadow-sm bg-white text-pink-600";
+                btnCat.className = "flex-1 py-2.5 rounded-xl font-bold text-xs transition text-gray-500";
+                formItem.classList.remove('hidden');
+                formCat.classList.add('hidden');
+                populateCategoryDropdown();
+            }
+        }
+
+        function setPresetName(sizeName) {
+            const nameInput = document.getElementById('item-name');
+            if (nameInput.value.trim() === '') {
+                nameInput.value = sizeName;
+            } else {
+                nameInput.value += ' ' + sizeName;
+            }
+        }
+
+        function populateCategoryDropdown() {
+            const select = document.getElementById('item-cat');
+            if (categories.length === 0) {
+                select.innerHTML = '<option value="">No categories found! Add category first.</option>';
+            } else {
+                select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            }
+        }
+
+        // Image compression & Base64 Converter
+        function handleImageUpload(event, previewId, textId, target) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById(textId).innerText = "Compressing...";
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 320;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+                    
+                    if (target === 'cat') catImageBase64 = compressedBase64;
+                    if (target === 'item') itemImageBase64 = compressedBase64;
+
+                    const preview = document.getElementById(previewId);
+                    preview.src = compressedBase64;
+                    preview.classList.remove('hidden');
+                    document.getElementById(textId).innerText = "Image Ready";
+                }
+            }
+        }
+
+        function saveCategory() {
+            const name = document.getElementById('cat-name').value.trim();
+            if (!name) {
+                showToast('Please enter category name!');
+                return;
+            }
+
+            const newCategory = {
+                id: 'cat_' + Date.now().toString(),
+                name: name.toUpperCase(),
+                image: catImageBase64 || ''
+            };
+
+            categories.push(newCategory);
+            localStorage.setItem('ic_categories', JSON.stringify(categories));
+            
+            showToast('Category Created Successfully!');
+            setTimeout(() => {
+                window.location.href = 'view.html';
+            }, 800);
+        }
+
+        function saveItem() {
+            const catId = document.getElementById('item-cat').value;
+            const name = document.getElementById('item-name').value.trim();
+            const qtyInput = document.getElementById('item-qty').value;
+            const costPriceInput = document.getElementById('item-cost-price').value;
+            const priceInput = document.getElementById('item-price').value;
+
+            if (!catId) {
+                showToast('Please select or create a category first!');
+                return;
+            }
+            if (!name) {
+                showToast('Please enter item name or size!');
+                return;
+            }
+            if (qtyInput === '' || parseInt(qtyInput) < 0) {
+                showToast('Please enter a valid stock quantity!');
+                return;
+            }
+
+            const qty = parseInt(qtyInput) || 0;
+            const price = priceInput !== '' ? parseFloat(priceInput) : 0;
+            const costPrice = costPriceInput !== '' ? parseFloat(costPriceInput) : (price * 0.6);
+
+            const newItem = {
+                id: 'item_' + Date.now().toString(),
+                categoryId: catId,
+                name: name,
+                quantity: qty,
+                costPrice: costPrice,
+                price: price,
+                image: itemImageBase64 || ''
+            };
+
+            items.push(newItem);
+            localStorage.setItem('ic_items', JSON.stringify(items));
+
+            // Log Initial Stock Entry into History
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const historyLog = {
+                id: Date.now().toString(),
+                itemId: newItem.id,
+                itemName: newItem.name,
+                type: 'add',
+                amount: qty,
+                reason: 'Initial Product Add',
+                date: dateStr,
+                time: timeStr
+            };
+
+            history.push(historyLog);
+            localStorage.setItem('ic_history', JSON.stringify(history));
+
+            showToast('Stock Product Added Successfully!');
+            setTimeout(() => {
+                window.location.href = 'view.html';
+            }, 800);
+        }
+    </script>
+</body>
+</html>
