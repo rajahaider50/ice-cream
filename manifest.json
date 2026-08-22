@@ -1,6 +1,6 @@
 {
-    "name": "Ice Cream & Slush Stock POS",
-    "short_name": "StockPOS",
+    "name": "Ice Cream & Slush POS",
+    "short_name": "IceCreamPOS",
     "description": "Smart Offline Inventory & Profit POS for Ice Cream & Slush Shops",
     "id": "./",
     "scope": "./",
