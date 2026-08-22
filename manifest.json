@@ -1,0 +1,15 @@
+{
+    "name": "Ice Cream Stock Pro",
+    "short_name": "StockPro",
+    "start_url": "splash.html",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#a855f7",
+    "icons": [
+        {
+            "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjYTg1NWY3IiBkPSJNMjg4IDE0NGMyNi41IDAgNDgtMjEuNSA0OC00OHMtMjEuNS00OC00OC00OC00OCAyMS41LTQ4IDQ4IDIxLjUgNDggNDggNDh6bTE5MS41IDEyOEM0NDUuOSAyNzIuOSAzOTkuNSAyNzIgMzUyIDI3MmMtMTcuNyAwLTMyLTE0LjMtMzItMzJzMTQuMy0zMiAzMi0zMmM1OC4xIDAgMTE1LjEtNC40IDE3MC4zLTEyLjggMTUuNi0yLjQgMzAuMSA4LjIgMzIuNSAyMy45czguMiAzMC4xLTIzLjkgMzIuNS02LjEgLjktNi44LjR6Ii8+PC9zdmc+",
+            "sizes": "192x192",
+            "type": "image/svg+xml"
+        }
+    ]
+}

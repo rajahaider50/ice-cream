@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ice Cream Stock Pro - Splash</title>
+    
+    <!-- Theme Color for Mobile Browser -->
+    <meta name="theme-color" content="#a855f7">
+    
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (Suppressing Warning) -->
+    <script>
+        const originalWarn = console.warn;
+        console.warn = function(msg) {
+            if (typeof msg === 'string' && msg.includes('cdn.tailwindcss.com should not be used in production')) return;
+            originalWarn.apply(console, arguments);
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Splash Animations -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #f3e8ff, #fce7f3);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Pulsing Glow Animation for the Main Icon */
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 35px rgba(236, 72, 153, 0.7); transform: scale(1.05); }
+            100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); transform: scale(1); }
+        }
+        
+        .animate-glow-pulse {
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        /* Fade In Animation for Text */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-up {
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <!-- Splash Icon Container -->
+    <div class="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white animate-glow-pulse mb-6 z-10 relative">
+        <!-- Inner white glow detail -->
+        <div class="absolute inset-0 border-2 border-white/30 rounded-[2rem]"></div>
+        <i class="fa-solid fa-ice-cream text-6xl drop-shadow-md"></i>
+    </div>
+    
+    <!-- App Title -->
+    <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 tracking-tight mb-2 animate-fade-up" style="opacity: 0; animation-delay: 0.2s;">
+        Stock Pro
+    </h1>
+    
+    <!-- Subtitle -->
+    <p class="text-sm text-purple-800 font-semibold tracking-wide uppercase animate-fade-up" style="opacity: 0; animation-delay: 0.4s;">
+        Ice Cream Inventory
+    </p>
+    
+    <!-- Loading Dots Animation -->
+    <div class="mt-14 flex space-x-3 animate-fade-up" style="opacity: 0; animation-delay: 0.6s;">
+        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce"></div>
+        <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.15s"></div>
+        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+    </div>
+
+    <!-- Application Initialization & Redirect Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if local storage databases exist, if not, create empty ones
+            // This prevents "null" errors in other files when reading data for the first time
+            if (!localStorage.getItem('ic_categories')) {
+                localStorage.setItem('ic_categories', JSON.stringify([]));
+            }
+            if (!localStorage.getItem('ic_items')) {
+                localStorage.setItem('ic_items', JSON.stringify([]));
+            }
+
+            // Redirect to the Main Dashboard (index.html) after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
