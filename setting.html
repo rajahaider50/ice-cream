@@ -433,6 +433,7 @@
                 localStorage.removeItem('ic_categories');
                 localStorage.removeItem('ic_items');
                 localStorage.removeItem('ic_history');
+                localStorage.setItem('ic_seeded', '1'); // keep storage empty; splash will not re-seed defaults
                 showToast('All local storage data cleared.');
                 setTimeout(() => window.location.reload(), 1200);
             }
