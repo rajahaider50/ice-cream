@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Creamery - Splash</title>
+    <title>Ice Cream & Slush POS - Splash</title>
     
     <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
@@ -84,12 +84,12 @@
     
     <!-- Title -->
     <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 tracking-tight mb-1 animate-fade-up" style="opacity: 0; animation-delay: 0.2s;">
-        Creamery
+        Ice Cream & Slush
     </h1>
     
     <!-- Subtitle -->
     <p class="text-xs text-purple-800 font-bold tracking-widest uppercase animate-fade-up" style="opacity: 0; animation-delay: 0.4s;">
-        Smart POS System
+        Smart Inventory & Profit POS
     </p>
     
     <!-- Loading Animation -->
@@ -117,8 +117,9 @@
                 }
             }
 
-            // Default Categories Preset Setup
-            if (!localStorage.getItem('ic_categories')) {
+            // Default Categories & Stock Preset Setup (First Launch Only)
+            // 'ic_seeded' flag ensures defaults are never re-created after the user erases data from Settings
+            if (!localStorage.getItem('ic_items') && !localStorage.getItem('ic_seeded')) {
                 const defaultCategories = [
                     { id: 'cat_cone', name: 'ICE CREAM CONE' },
                     { id: 'cat_cup', name: 'ICE CREAM CUP' },
@@ -128,8 +129,8 @@
                 localStorage.setItem('ic_categories', JSON.stringify(defaultCategories));
             }
 
-            // Default Stock Items Preset Setup
-            if (!localStorage.getItem('ic_items')) {
+            // Default Stock Items Preset Setup (First Launch Only)
+            if (!localStorage.getItem('ic_items') && !localStorage.getItem('ic_seeded')) {
                 const defaultPresetItems = [
                     // Ice Cream Cones
                     { id: 'item_1', categoryId: 'cat_cone', name: 'Small Cone', costPrice: 6, price: 10, quantity: 100 },
@@ -154,6 +155,7 @@
                     { id: 'item_14', categoryId: 'cat_acc', name: 'Chocolate Syrup Bottle', costPrice: 450, price: 600, quantity: 10 }
                 ];
                 localStorage.setItem('ic_items', JSON.stringify(defaultPresetItems));
+                localStorage.setItem('ic_seeded', '1');
             }
 
             // History Database Initialization
