@@ -1,17 +1,16 @@
 {
-    "name": "Creamery",
-    "short_name": "Creamery",
-    "description": "Smart POS System",
+    "name": "Ice Cream & Slush POS",
+    "short_name": "IceCreamPOS",
+    "description": "Smart Offline Inventory & Profit POS for Ice Cream & Slush Shops",
     "id": "./",
     "scope": "./",
-    "start_url": "./index.html",
+    "start_url": "./splash.html",
     "display": "standalone",
     "display_override": [
         "standalone",
-        "minimal-ui",
-        "browser"
+        "minimal-ui"
     ],
-    "orientation": "portrait-primary",
+    "orientation": "portrait",
     "background_color": "#f3e8ff",
     "theme_color": "#a855f7",
     "lang": "en",
@@ -20,54 +19,30 @@
         "business",
         "productivity"
     ],
-    "screenshots": [
-        {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect width='540' height='720' fill='%23a855f7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='120' font-family='Arial' fill='%23ffffff' font-weight='bold'>🍦</text></svg>",
-            "sizes": "540x720",
-            "type": "image/svg+xml",
-            "form_factor": "narrow"
-        }
-    ],
     "icons": [
         {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='45' fill='%23a855f7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='100' font-family='Arial' fill='%23ffffff' font-weight='bold'>🍦</text></svg>",
+            "src": "icon-192.png",
             "sizes": "192x192",
-            "type": "image/svg+xml",
+            "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23a855f7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='280' font-family='Arial' fill='%23ffffff' font-weight='bold'>🍦</text></svg>",
+            "src": "icon-512.png",
             "sizes": "512x512",
-            "type": "image/svg+xml",
+            "type": "image/png",
             "purpose": "any"
         },
         {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%23a855f7;stop-opacity:1'/><stop offset='100%' style='stop-color:%23ec4899;stop-opacity:1'/></linearGradient></defs><rect width='192' height='192' rx='45' fill='url(%23grad)'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='100' font-family='Arial' fill='%23ffffff' font-weight='bold'>🍦</text></svg>",
+            "src": "icon-192-maskable.png",
             "sizes": "192x192",
-            "type": "image/svg+xml",
+            "type": "image/png",
             "purpose": "maskable"
         },
         {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%23a855f7;stop-opacity:1'/><stop offset='100%' style='stop-color:%23ec4899;stop-opacity:1'/></linearGradient></defs><rect width='512' height='512' rx='120' fill='url(%23grad)'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='280' font-family='Arial' fill='%23ffffff' font-weight='bold'>🍦</text></svg>",
+            "src": "icon-512-maskable.png",
             "sizes": "512x512",
-            "type": "image/svg+xml",
+            "type": "image/png",
             "purpose": "maskable"
         }
-    ],
-    "shortcuts": [
-        {
-            "name": "New Sale",
-            "short_name": "Sale",
-            "description": "Record a new sale transaction",
-            "url": "/add.html?mode=sale",
-            "icons": [
-                {
-                    "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' rx='20' fill='%23a855f7'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='50' font-family='Arial' fill='%23ffffff' font-weight='bold'>+</text></svg>",
-                    "sizes": "96x96",
-                    "type": "image/svg+xml"
-                }
-            ]
-        }
-    ],
-    "prefer_related_applications": false
+    ]
 }
